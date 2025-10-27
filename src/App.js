@@ -22,6 +22,7 @@ app.use(cors({
 
 
 
+
 app.use(express.json());
 
 app.use(cookieParser())
@@ -34,5 +35,22 @@ app.use('/reportes', adminReporteRoutes);
 
 app.use("/admin", adminRoutes)
 app.use("/mercadopago", adminMercadoRoutes);
+app.post("/webhook", (req, res) => {
+  try {
+    const data = req.body;
+    console.log("📦 Webhook recibido:", data);
+
+    // Aquí puedes manejar diferentes eventos:
+    if (data.action === "payment.updated") {
+      console.log("💰 Pago actualizado:", data.data.id);
+      // Lógica de actualización del pago (guardar en DB, enviar email, etc.)
+    }
+
+    res.status(200).send("OK"); // Siempre responder 200
+  } catch (error) {
+    console.error("❌ Error al procesar webhook:", error);
+    res.sendStatus(500);
+  }
+});
 
 module.exports = app;
